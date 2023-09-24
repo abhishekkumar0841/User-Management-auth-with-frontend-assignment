@@ -1,6 +1,6 @@
 exports.signupValidator = (req, res, next) =>{
     const {name, email, password, bio, role, username} = req.body;
-    if(req.body && name && email && password && bio && role && username){
+    if(req.body && name && email && password && bio && username){
         next();
     }else{
         res.status(400).json({

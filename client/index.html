@@ -23,7 +23,7 @@
     <script>
       const getUser = async () => {
         try {
-          const response = await fetch("http://localhost:5000/getuser", {
+          const response = await fetch("http://localhost:5000/api/v1/", {
             method: "GET",
             credentials: "include",
           });
@@ -32,7 +32,7 @@
             window.location.href = "http://localhost:5500/client/login.html";
           }
 
-          const data = await response.json();
+          const {data} = await response.json();
           const username = document.getElementById("username");
           const name = document.getElementById("name");
           const bio = document.getElementById("bio");
@@ -43,6 +43,7 @@
         } catch (error) {
           console.log("Error while getting user");
           console.log(error.message);
+          window.location.href = 'http://localhost:5500/client/login.html'
         }
       };
 
