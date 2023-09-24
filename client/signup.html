@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup Page</title>
+  </head>
+  <body>
+    <div class="formContainer">
+      <form>
+        <div class="formGroup">
+          <label for="name">name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your name"
+          />
+        </div>
+        <div class="formGroup">
+          <label for="username">username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+          />
+        </div>
+        <div class="formGroup">
+          <label for="email">email:</label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div class="formGroup">
+          <label for="password">password:</label>
+          <input
+            type="text"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+          />
+        </div>
+        <div class="formGroup">
+          <label for="bio">bio:</label>
+          <input type="text" id="bio" name="bio" placeholder="Enter your bio" />
+        </div>
+        <button type="submit" id="submit">Sign Up</button>
+        <div class="links">
+          <a href="#">Forgot Password ?</a>
+          <a href="login.html">Login</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- javascript -->
+
+    <script>
+      const form = document.getElementById("submit");
+      form.addEventListener("click", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const bio = document.getElementById("bio").value;
+
+        if (!name || !username || !email || !password || !bio) {
+          alert("All fields are required");
+        }
+
+        const userData = {
+          name: name,
+          username: username,
+          email: email,
+          password: password,
+          bio: bio,
+        };
+
+        registeredUser(userData);
+      });
+
+      const registeredUser = async (payload) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/v1/signup', {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                body: JSON.stringify(payload)
+            });
+
+            const data = response.json();
+            console.log("User data is-->", data)
+            window.location.href = 'http://localhost5000/client/login.html'
+        } catch (error) {
+            console.log("error while user registration")
+            console.log(error.message)
+        }
+      };
+    </script>
+  </body>
+</html>

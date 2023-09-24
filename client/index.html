@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://images.pexels.com/photos/18460268/pexels-photo-18460268/free-photo-of-curly-red-haired-young-guy.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+        alt="User Image"
+        width="100px"
+      />
+      <h2 id="username">User Name</h2>
+      <h2 id="name">Name</h2>
+      <h3 id="bio">Bio</h3>
+      <h2>Followers: 1000</h2>
+    </div>
+
+    <!-- javascript -->
+
+    <script>
+      const getUser = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/getuser", {
+            method: "POST",
+            credentials: true,
+          });
+
+          if (response.status !== 200) {
+            window.location.href = "http://localhost:5500/client/login.html";
+          }
+
+          const data = await response.json();
+          const username = document.getElementById("username");
+          const name = document.getElementById("name");
+          const bio = document.getElementById("bio");
+
+          username.innerText = data.username;
+          name.innerText = data.name;
+          bio.innerText = data.bio;
+        } catch (error) {
+          console.log("Error while getting user");
+          console.log(error.message);
+        }
+      };
+
+      getUser();
+    </script>
+  </body>
 </html>
