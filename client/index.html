@@ -16,6 +16,7 @@
       <h2 id="name">Name</h2>
       <h3 id="bio">Bio</h3>
       <h2>Followers: 1000</h2>
+      <button id="logoutBtn">Logout</button>
     </div>
 
     <!-- javascript -->
@@ -48,6 +49,21 @@
       };
 
       getUser();
+
+      const logoutBtn = document.getElementById('logoutBtn')
+      logoutBtn.addEventListener('click', async ()=>{
+        await fetch('http://localhost:5000/api/v1/logout')
+        window.location.href = 'http://localhost:5500/client/login.html';
+        const {data} = await response.json();
+          const username = document.getElementById("username");
+          const name = document.getElementById("name");
+          const bio = document.getElementById("bio");
+
+          username.innerText = "";
+          name.innerText = "";
+          bio.innerText = "";
+      })
+
     </script>
   </body>
 </html>

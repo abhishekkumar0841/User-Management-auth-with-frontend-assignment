@@ -1,6 +1,6 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
 exports.userSignup = async (req, res) => {
   try {
@@ -46,49 +46,50 @@ exports.userLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const validUser = await UserModel.findOne({username})
+    const validUser = await UserModel.findOne({ username });
 
-    if(!validUser){
-        return res.status(400).json({
-            success: false,
-            message: "Signup first!",
-          });
+    if (!validUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Signup first!",
+      });
     }
 
-    const validPassword = await bcrypt.compare(password, validUser.password)
+    const validPassword = await bcrypt.compare(password, validUser.password);
 
-    if(!validPassword){
-        return res.status(400).json({
-            success: false,
-            message: "Wrong Password!",
-          });
+    if (!validPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Wrong Password!",
+      });
     }
 
     const payload = {
-        id: validUser._id,
-        username: validUser.username,
-        email: validUser.email,
-        role: validUser.role,
+      id: validUser._id,
+      username: validUser.username,
+      email: validUser.email,
+      role: validUser.role,
+    };
+
+    if (validUser && validPassword) {
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      validUser.password = undefined;
+      // console.log(validUser)
+
+      const cookieOptions = {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true, //not able to modify cookie on client side
+      };
+
+      res.cookie("token", token, cookieOptions).status(200).json({
+        success: true,
+        data: validUser,
+        message: "User Logged in successfully",
+      });
     }
-
-    if(validUser && validPassword){
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '1h'})
-
-        validUser.password = undefined;
-        // console.log(validUser)
-
-        const cookieOptions = {
-            maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: true, //not able to modify cookie on client side
-        }
-
-        res.cookie("token", token, cookieOptions).status(200).json({
-            success: true,
-            data: validUser,
-            message: "User Logged in successfully"
-        })
-    }
-    
   } catch (error) {
     return res.status(400).json({
       success: false,
@@ -97,20 +98,38 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-exports.getUser = async (req, res) => {
-try {
-    const {id, username} = req.user;
-    const userData = await UserModel.findOne({username})
+exports.userLogout = async (req, res) => {
+  try {
+    const cookieOptions = {
+      expires: new Date,
+      httpOnly: true,
+    };
+    res.cookie("token", null, cookieOptions);
     res.status(200).json({
-        success: true,
-        data: userData,
-        message: `User get successfully.. Hello ${userData.name}`
-    })
-} catch (error) {
-    return res.status(400).json({
-        success: false,
-        message: `Unable to get user ${error.message}`,
-      });
-}
+      success: true,
+      message: "You are logged out",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+  })
+  }
+};
 
+exports.getUser = async (req, res) => {
+  try {
+    const { id, username } = req.user;
+    const userData = await UserModel.findOne({ username });
+    res.status(200).json({
+      success: true,
+      data: userData,
+      message: `User get successfully.. Hello ${userData.name}`,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: `Unable to get user ${error.message}`,
+    });
+  }
 };
